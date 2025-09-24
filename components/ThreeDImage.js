@@ -1,27 +1,18 @@
-import React, { Suspense } from 'react';
-import { Canvas, useLoader } from '@react-three/fiber/native';
-import { TextureLoader } from 'three';
-import { View } from 'react-native';
+import React from 'react';
+import { View, Image } from 'react-native';
 
-function BikeModel({ imageSource }) {
-  const texture = useLoader(TextureLoader, imageSource);
-  return (
-    <mesh rotation={[0.2, -0.3, 0.1]}>
-      <planeGeometry args={[4, 3]} />
-      <meshBasicMaterial map={texture} transparent />
-    </mesh>
-  );
-}
-
+// Simplified version that works without @react-three/fiber
 export default function ThreeDImage({ style, imageSource }) {
   return (
-    <View style={style}>
-        <Canvas>
-          <ambientLight intensity={Math.PI} />
-          <Suspense fallback={null}>
-              <BikeModel imageSource={imageSource} />
-          </Suspense>
-        </Canvas>
+    <View style={[style, { justifyContent: 'center', alignItems: 'center', backgroundColor: '#1a1a1a', borderRadius: 15 }]}>
+      <Image 
+        source={imageSource} 
+        style={{ 
+          width: '90%', 
+          height: '90%', 
+          resizeMode: 'contain',
+        }} 
+      />
     </View>
   );
 }
