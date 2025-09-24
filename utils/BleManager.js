@@ -3,7 +3,7 @@ import { BleManager, State as BleState } from 'react-native-ble-plx';
 import { PermissionsAndroid, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
-import base64 from 'react-native-base64';
+import { decode as base64Decode, encode as base64Encode } from 'base-64';
 
 // Create a context to provide BLE data and functions to the entire app
 const BleContext = createContext();
@@ -166,7 +166,7 @@ export const BleProvider = ({ children }) => {
         if (writeCharacteristic) {
           addLog('Attempting Auth Method: Generic Key Write...');
           try {
-            const authKey = base64.encode('YEZDI_AUTH_DEFAULT');
+            const authKey = base64Encode('YEZDI_AUTH_DEFAULT');
             await writeCharacteristic.writeWithResponse(authKey);
             addLog('Generic key written. Now attempting to monitor for data again.');
             // Re-attempt to find and monitor characteristic post-auth
@@ -188,45 +188,6 @@ export const BleProvider = ({ children }) => {
       } catch (e) {
         addLog(`Bonding request failed: ${e.message}`);
       }
-  
-      /**
-       * GUIDE FOR PACKET SNIFFING AND REPLICATION (Method 3 Cont.)
-       *
-       * This is a manual process for advanced users if the above methods fail due to a
-       * proprietary, complex authentication handshake (common on modern vehicles).
-       *
-       * **Disclaimer**: Reverse-engineering communication protocols may violate the terms of
-       * service of the vehicle manufacturer. Proceed at your own risk.
-       *
-       * 1. **Capture BLE Packets**:
-       * - Use the official Yezdi app to connect to your bike.
-       * - While it's connecting, use a BLE sniffer tool to capture the communication.
-       * - **Software**: nRF Connect for Mobile (offers a logger), Wireshark with BLE plugins.
-       * - **Hardware**: Ubertooth One, Nordic Semiconductor nRF52 DK.
-       *
-       * 2. **Analyze the Handshake**:
-       * - In the captured logs, look at the packets immediately after the connection is established.
-       * - You're looking for `Write Request` or `Write Command` packets sent from the phone (Master) to the bike (Slave).
-       * - The **value** (payload) of these packets is the authentication key or challenge-response. It might be a static key, or it could be dynamic (e.g., encrypted timestamp).
-       *
-       * 3. **Replicate the Sequence**:
-       * - Identify the Service and Characteristic UUIDs the official app writes to.
-       * - In the code below, replace `YOUR_AUTH_CHAR_UUID` and `YOUR_AUTH_PACKET_AS_BASE64`
-       * with the values you discovered.
-       *
-       * // Example Code to be implemented manually:
-       * // const authServiceUUID = '...';
-       * // const authCharUUID = '...';
-       * // const authPayload = '...'; // base64 encoded payload from your sniffing
-       * // await connected.writeCharacteristicWithResponseForService(authServiceUUID, authCharUUID, authPayload);
-       * // addLog('Sent custom authentication packet.');
-       *
-       * 4. **Challenge-Response**:
-       * - If the bike first sends a `Read Request` or `Notification` (the challenge) and the app
-       * responds with a `Write Request` (the response), you'll need to replicate this logic.
-       * - This often involves cryptographic functions (HMAC, SHA256) on the challenge data.
-       * You'll need to decompile the official app to find the algorithm and secret key.
-       */
   
       setConnectedDevice(connected);
       setConnectionStatus('Connected');
@@ -260,7 +221,7 @@ export const BleProvider = ({ children }) => {
   // This is a placeholder implementation assuming a simple byte structure.
   const parseBikeData = (base64Value) => {
     try {
-      const bytes = base64.decode(base64Value);
+      const bytes = base64Decode(base64Value);
       // Example structure: [speed, rpm_high, rpm_low, flags, fuel, gear]
       // This is PURELY an example and MUST be replaced with the bike's actual protocol.
       const data = new Uint8Array(bytes.split('').map(c => c.charCodeAt(0)));
