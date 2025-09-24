@@ -129,7 +129,7 @@ export default function DashboardScreen() {
                     </TouchableOpacity>
                     <View style={styles.timeContainer}>
                         <Text style={styles.timeText}>{currentTime}</Text>
-                        <Text style={styles.connectionText} style={{color: isConnected ? '#0f0' : '#f00'}}>
+                        <Text style={[styles.connectionText, {color: isConnected ? '#0f0' : '#f00'}]}>
                             {connectionStatus}
                         </Text>
                     </View>
