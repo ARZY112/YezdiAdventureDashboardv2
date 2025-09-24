@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Yezdi Adventure Dashboard",
+    "slug": "yezdi-adventure-dashboard",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourname.yezdiadventure",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "This app uses Bluetooth to connect to your Yezdi Adventure bike and display real-time data.",
+        "NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to discover and connect to your Yezdi Adventure bike.",
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to display it on the map and for BLE scanning.",
+        "NSCameraUsageDescription": "This app uses the camera to scan QR codes for quick bike pairing and authentication."
+      }
+    },
+    "android": {
+      "package": "com.yourname.yezdiadventure",
+      "permissions": [
+        "android.permission.BLUETOOTH_SCAN",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA"
+      ]
+    },
+    "plugins": [
+      [
+        "react-native-ble-plx",
+        {
+          "isBackgroundEnabled": true,
+          "modes": [
+            "peripheral",
+            "central"
+          ],
+          "bluetoothAlwaysPermission": "Allow $(PRODUCT_NAME) to connect to Bluetooth devices."
+        }
+      ]
+    ]
+  }
+}
